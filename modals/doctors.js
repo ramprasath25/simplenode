@@ -43,5 +43,8 @@ module.exports = mongoose.model('doctors', new Schema({
     },
     createdDate: {
         type: String
+    },
+    profile_img: {
+        type: String
     }
 }));

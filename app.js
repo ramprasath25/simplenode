@@ -27,9 +27,9 @@ app.use(function (req, res, next) {
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/', index);
 app.use('/users', users);
@@ -58,7 +58,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/doctorz', {
   if (err) {
     console.log("Database not connected", err);
   } else {
-    console.log("Database connected");
+    console.log("Database connected, Server Running at port 3000");
   }
 });
 
