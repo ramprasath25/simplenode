@@ -6,23 +6,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');
 var mongoose = require('mongoose');
-
+var multer = require('multer');
+// Routes
 var index = require('./routes/index');
 var users = require('./routes/users');
-
 var app = express();
-var server = http.createServer(app).listen(3000);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-/** CROS-Request ***/
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", req.headers.origin);
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS");
-  res.header("Access-Control-Allow-Credentials", true);
-  next();
-});
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -31,6 +22,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'uploads')));
 
+/** CROS-Request ***/
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS");
+  res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
+// File Upload
+app.use(multer({ dest: path.join(__dirname, '../uploads/') }).any())
 app.use('/api/', index);
 app.use('/users', users);
 
@@ -40,17 +41,18 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
-
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
   // render the error page
   res.status(err.status || 500);
   res.render('error');
 });
+// Creating Server
+http.createServer(app).listen(3000);
+// MongoDB Connection
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://127.0.0.1:27017/doctorz', {
   useMongoClient: true
@@ -61,5 +63,4 @@ mongoose.connect('mongodb://127.0.0.1:27017/doctorz', {
     console.log("Database connected, Server Running at port 3000");
   }
 });
-
 module.exports = app;

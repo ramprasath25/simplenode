@@ -1,9 +1,9 @@
-var Schema = require('./doctors');
+var doctor_schema = require('./doctor_schema');
 var fs = require('fs');
 var path = require('path');
 
 exports.registration = function(data, callback) {
-    let doctor = new Schema({
+    let doc = new doctor_schema({
       firstname: data.body.firstname,
       lastname: data.body.lastname,
       specialist: data.body.specialist,
@@ -22,16 +22,18 @@ exports.registration = function(data, callback) {
           versionKey: false
   }); 
     //  File Upload
-    let extn = data.file.originalname.split('.')[1];
-    let target_path = path.join(__dirname, '../uploads/' + doctor._id + '.' + extn);
-    let upload_file = fs.createReadStream(data.file.path);
-    let destination = fs.createWriteStream(target_path);
-    upload_file.pipe(destination);
-    fs.unlink(data.file.path);
-    upload_file.on('end', function () { console.log("File uploaded completed") });
-    upload_file.on('error', function (err) { console.log(err) });
-    doctor.profile_img = doctor._id + '.' + extn;
-    doctor.save(function(err, data) {
+    if(data.files.length > 0) {        
+        let extn = data.files[0].originalname.split('.')[1];
+        let target_path = path.join(__dirname, '../uploads/' + doc._id + '.' + extn);
+        let upload_file = fs.createReadStream(data.files[0].path);
+        let destination = fs.createWriteStream(target_path);
+        upload_file.pipe(destination);
+        fs.unlink(data.files[0].path);
+        upload_file.on('end', function () { console.log("File uploaded completed") });
+        upload_file.on('error', function (err) { console.log(err) });
+        doc.profile_img = doc._id + '.' + extn;
+    }
+    doc.save(function(err, data) {
         if(err) {
             callback(true);
         } else {
