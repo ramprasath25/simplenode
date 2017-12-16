@@ -25,3 +25,17 @@ exports.getDetails = function(id, callback) {
         }
     });
 };
+/* Search Doctor */
+exports.searchData = function(searchParams, callback) {
+    doctor_schema.find({
+        $or:
+            [{ firstname: { $regex: new RegExp(searchParams, "i") }},
+            { lastname: { $regex: new RegExp(searchParams, "i") }}]
+    }, function(err, result) {
+        if (err) {
+            callback(true, "Error, fetching data");
+        } else {
+            callback(false, result);
+        }
+    });
+};

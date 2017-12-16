@@ -34,12 +34,12 @@ router.post('/register', function(req, res) {
 router.post('/getDoctorList', function(req, res){
   let output = v.validate(req.body, inputSchema.getList);
   if (output.errors.length == 0) {
-  doctorList.getAllList(req.body, function (err, data, page_count) {
-    if (err) {
-      res.status(500).json({ message: "Error, please try later" });
-    } else {
-      res.status(200).json({ message: "Ok, success", data: data , page_count});
-    }
+    doctorList.getAllList(req.body, function (err, data, page_count) {
+      if (err) {
+        res.status(500).json({ message: "Error, please try later" });
+      } else {
+        res.status(200).json({ message: "Ok, success", data: data , page_count});
+      }
   }); 
   } else {
     const errors = output.errors.map(function (error) {
@@ -48,7 +48,20 @@ router.post('/getDoctorList', function(req, res){
     res.status(400).json({ message: "Input fields missing", error: errors });
   } 
 });
-
+/* Search Doctor */
+router.post('/search', function(req, res){  
+  if (req.body.searchParams && req.body.searchParams !== '' && req.body.searchParams.length > 0) {
+    doctorList.searchData(req.body.searchParams, function(err, data) {
+      if (err) {
+        res.status(500).json({ message: "Error, please try later" });
+      } else {
+        res.status(200).json({ message: "Ok, success", data });
+      }
+    });
+  } else {
+    res.status(400).json({ message: "Input fields missing" });
+  }
+});
 /* Get Single Doctor details */
 router.get('/getDoctorDetails/:id', function(req, res) {
   doctorList.getDetails(req.params.id, function (err, data) {
