@@ -31,7 +31,7 @@ exports.registration = function(data, callback) {
         fs.unlink(data.files[0].path);
         upload_file.on('end', function () { console.log("File uploaded completed") });
         upload_file.on('error', function (err) { console.log(err) });
-        doc.profile_img = doc._id + '.' + extn;
+        doc.profile_img = '/uploads/'+doc._id + '.' + extn;
     }
     doc.save(function(err, data) {
         if(err) {

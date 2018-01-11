@@ -27,10 +27,26 @@ exports.getDetails = function(id, callback) {
 };
 /* Search Doctor */
 exports.searchData = function(searchParams, callback) {
+
+    // var query = doctor_schema.find({
+    //    $text:{
+    //        $search: searchParams
+    //    },
+    // }, { score: { $meta: "textScore" } }).sort({
+    //     score: { $meta: "textScore" }
+    // });
+    // query.exec(function(err, result) {
+    //     if (err) {
+    //         callback(true, "Error, fetching data");
+    //     } else {
+    //         callback(false, result);
+    //     }
+    // });
+    const searchParam = searchParams.split(/ /).join("|");
     doctor_schema.find({
         $or:
-            [{ firstname: { $regex: new RegExp(searchParams, "i") }},
-            { lastname: { $regex: new RegExp(searchParams, "i") }}]
+            [{ firstname: { $regex: new RegExp(searchParam, "i") }},
+            { lastname: { $regex: new RegExp(searchParam, "i") }}]
     }, function(err, result) {
         if (err) {
             callback(true, "Error, fetching data");
